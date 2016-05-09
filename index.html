@@ -1,0 +1,117 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>RPG MAKER MV Translator</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <!--[if lt IE 9]>
+            <script src="js/vendor/html5-3.6-respond-1.4.2.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+    <div class="modal fade" id="helpModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Help</h4>
+                </div>
+                <div class="modal-body">
+                    <h2>Importent:</h2>
+                    <h3>Only Textboxes and Maps supported at the moment</h3>
+                    <p></p>
+                    <p>How to Use:</p>
+                    <p>Select a Map File with the File Selector on the Top (The Map Files are in You Game Dir under data, called Map001.json and so on).</p>
+                    <p>Wait for the File to be Processed (may take some time, depending on your PC and the size of the File).</p>
+                    <p>On the Left is a List with Events, there ID and there Pages, if an Event or a Page of it has no Text it won´t show up.</p>
+                    <p>If you Select one of the Events you get the Main Text Table.</p>
+                    <p>Here you can see the Original Content of the Textfield and one Field to Change it.</p>
+                    <p>If you edit the New Field you NEED to click Somewhere else or press Enter to save the change.</p>
+                    <p>Once the Changes are saved the Row turns Green.</p>
+                    <p>If you press the Download Button, obviously you Download the "New" Changed Version of the File, with the same Name as the Original one.</p>
+                    <p>If you Upload a new File without saving the old one first the Changes will be lost, also if you reload the Page.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Got It!</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <div class="container">
+        <div class="row">
+            <div class="text-center">
+                <h1>RPG Maker MV Translation Tool</h1>
+                <h6>Version 1.0.0</h6>
+            </div>
+        </div>
+        <div class="row" id="file_control">
+            <div class="col-sm-3">
+                <div class="btn-group btn-group-justified">
+                    <a id="download" role="button" class="btn btn-primary">Download File</a>
+                    <a id="help" role="button" class="btn btn-info" data-toggle="modal" data-target="#helpModal">Help</a>
+                </div>
+            </div>
+            <div class="col-sm-4" id="uploader">
+                <input type="file" id="file" name="file">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <table class="table table-striped table-hover">
+                <colgroup>
+                    <col width="10%">
+                    <col width="80%">
+                    <col width="10%">
+                </colgroup>
+                <thead>
+                    <tr>
+                       <th>ID</th>
+                       <th>Event</th>
+                       <th>Page</th>
+                    </tr>
+                </thead>
+                <tbody id="event_table">
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-9">
+            <table class="table table-striped table-bordered">
+                <colgroup>
+                    <col width="5%">
+                    <col width="15%">
+                    <col width="40%">
+                    <col width="40%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Original</th>
+                        <th>New</th>
+                    </tr>
+                </thead>
+                <tbody id="text_table">
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/FileSaver.min.js"></script>
+        <script src="js/vendor/js.cookie.js"></script>
+
+        <script src="js/main.js"></script>
+    </body>
+</html>
