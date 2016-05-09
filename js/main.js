@@ -2,6 +2,7 @@
     var org_data;
     var new_data;
     var file_name = '';
+    var debug = false;
     //bind events
     $('#file').on('change',function(env){
         clearAll();
@@ -18,6 +19,17 @@
     $('#event_table').on('click','tr',loadText);
     $('#text_table').on('change','input',saveText);
     $('#download').on('click', downloadJSON);
+    $('#debug').on('click', function(){
+        if(debug == false) {
+            debug = true;
+            $(this).addClass('btn-success').removeClass('btn-danger').html('Debug Active');
+            $('#debug_data').removeClass('hidden');
+        }else {
+            debug = false;
+            $(this).removeClass('btn-success').addClass('btn-danger').html('Activate Debug');
+            $('#debug_data').addClass('hidden');
+        }
+    });
 
     //show Help on first visit
 
@@ -85,13 +97,17 @@
     function loadText(){
         $('#text_table').empty();
         var el=$(this);
+        el.parents('table').find('.info').removeClass('info');
+        el.addClass('info');
         var id=el.data('id');
         var page=el.data('page');
         var list = org_data.events[id].pages[page].list;
         var list_new =new_data.events[id].pages[page].list;
         $(list).each(function(index,value){
-            // console.log(value);
-            if(value == null || (value.code != 401 && value.code != 101)){
+            if(debug){
+                $('#debug_data').html(btoa(JSON.stringify(list)));
+            }
+            if(value == null || (value.code != 401 && value.code != 101 && value.code != 102)){
                 return true;
             }
             if(value.code == 101){
@@ -105,10 +121,54 @@
                         $('<td>').html("Image: "+ (value.parameters[0]||'none')).attr('colspan',2)
                     )
                 );
+            }else if(value.code == 102){
+                //write selection values to Table
+                var new_table = $('<table>').addClass('table').append(
+                    $('<col>').attr('width','10%')
+                ).append(
+                    $('<col>').attr('width','90%')
+                ).append(
+                    $('<tbody>')
+                );
+                var org_table = new_table.clone();
+                $(value.parameters[0]).each(function(index1,value){
+                    if(value == null){
+                        return true;
+                    }
+                    org_table.find('tbody').append(
+                        $('<tr>').append(
+                            $('<td>').html(index1)
+                        ).append(
+                            $('<td>').html(value)
+                        )
+                    );
+                    new_table.find('tbody').append(
+                        $('<tr>').append(
+                            $('<td>').html(index1)
+                        ).append(
+                            $('<td>').append(
+                                $('<input>').val(list_new[index].parameters[0][index1]).attr('data-id',index1).attr('type', 'text')
+                            )
+                        )
+                    );
+                });
+                $('#text_table').append(
+                    $('<tr>').attr('data-event', id).attr('data-page', page).attr('data-id', index).attr('data-type',102)
+                        .addClass('edit_row').append(
+                        $('<td>').html(index)
+                    ).append(
+                        $('<td>').html("Selection")
+                    ).append(
+                        $('<td>').append(org_table)
+                    ).append(
+                        $('<td>').append(new_table)
+                    )
+                );
             }else {
                 //write to text table
                 $('#text_table').append(
-                    $('<tr>').attr('data-event', id).attr('data-page', page).attr('data-id', index).addClass(value.parameters[0]!=list_new[index].parameters[0]&&'success').append(
+                    $('<tr>').attr('data-event', id).attr('data-page', page).attr('data-id', index).attr('data-type',401)
+                        .addClass(value.parameters[0]!=list_new[index].parameters[0]&&'success').addClass('edit_row').append(
                         $('<td>').html(index)
                     ).append(
                         $('<td>').html('Text')
@@ -126,12 +186,18 @@
 
     function saveText(){
         var el=$(this);
-        var par=el.parent().parent();
+        var par=el.parents('.edit_row');
         par.removeClass('success').addClass('info');
         var id=par.data('id');
         var page=par.data('page');
         var event=par.data('event');
-        new_data.events[event].pages[page].list[id].parameters[0] = el.val();
+        var type=par.data('type');
+        if(type == 401) {
+            new_data.events[event].pages[page].list[id].parameters[0] = el.val();
+        }else if(type == 102){
+            var sel_id=el.data('id');
+            new_data.events[event].pages[page].list[id].parameters[0][sel_id] = el.val();
+        }
         par.removeClass('info').addClass('success');
     }
 

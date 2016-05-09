@@ -40,6 +40,7 @@
                     <p>If you Run into Problems you can Create a Ticket <a href="https://bitbucket.org/gamestailer94/rpgmakertranslator/issues">Here</a></p>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" id="debug" class="btn btn-danger">Activate Debug</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Got It!</button>
                 </div>
             </div><!-- /.modal-content -->
@@ -67,43 +68,50 @@
                 <input type="file" id="file" name="file">
             </div>
         </div>
-        <div class="col-sm-3">
-            <table class="table table-striped table-hover">
-                <colgroup>
-                    <col width="10%">
-                    <col width="80%">
-                    <col width="10%">
-                </colgroup>
-                <thead>
-                    <tr>
-                       <th>ID</th>
-                       <th>Event</th>
-                       <th>Page</th>
-                    </tr>
-                </thead>
-                <tbody id="event_table">
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-sm-3">
+                <table class="table table-striped table-hover">
+                    <colgroup>
+                        <col width="10%">
+                        <col width="80%">
+                        <col width="10%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                           <th>ID</th>
+                           <th>Event</th>
+                           <th>Page</th>
+                        </tr>
+                    </thead>
+                    <tbody id="event_table">
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-9">
+                <table class="table table-striped table-bordered">
+                    <colgroup>
+                        <col width="5%">
+                        <col width="15%">
+                        <col width="40%">
+                        <col width="40%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Original</th>
+                            <th>New</th>
+                        </tr>
+                    </thead>
+                    <tbody id="text_table">
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-sm-9">
-            <table class="table table-striped table-bordered">
-                <colgroup>
-                    <col width="5%">
-                    <col width="15%">
-                    <col width="40%">
-                    <col width="40%">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Type</th>
-                        <th>Original</th>
-                        <th>New</th>
-                    </tr>
-                </thead>
-                <tbody id="text_table">
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-sm-3">
+                <textarea class="hidden" id="debug_data"></textarea>
+            </div>
         </div>
     </div>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
