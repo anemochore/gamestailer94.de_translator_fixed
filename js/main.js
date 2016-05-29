@@ -18,6 +18,7 @@
     });
     $('#event_table').on('click','tr',loadText);
     $('#text_table').on('change','input',saveText);
+    $('#items_table').on('change','input',saveItem);
     $('#download').on('click', downloadJSON);
     $('#debug').on('click', function(){
         if(debug == false) {
@@ -42,56 +43,94 @@
 
 
     function parseData(json){
-        if(typeof json[0] != 'undefined') {
-            $(json).each(function(index, value) {
-                if(value != null){
-                    parseData(value);
+        // save for later
+        org_data = json;
+        new_data = jQuery.extend(true, $.isArray(json)?[]:{}, json);
+        // is map ?
+        if(typeof json.events != 'undefined'){
+            $('#maps').removeClass('hidden');
+            // per event
+            $(json.events).each(function(index, value) {
+                if(value == null){
+                    return true;
                 }
-            });
-        }else{
-            // save for later
-            org_data = json;
-            new_data = jQuery.extend(true, {}, json);
-            // is map ?
-            if(typeof json.events != 'undefined'){
-                // per event
-                $(json.events).each(function(index, value) {
+                var id= value.id;
+                var name= value.name;
+                // per page
+                $(value.pages).each(function(index,value) {
                     if(value == null){
                         return true;
                     }
-                    var id= value.id;
-                    var name= value.name;
-                    // per page
-                    $(value.pages).each(function(index,value) {
-                        if(value == null){
+                    // test if anything important is in the event
+                    var skip = true;
+                    $(value.list).each(function(index,value) {
+                        if (value == null || (value.code != 401 && value.code != 101)) {
                             return true;
+                        }else{
+                            skip = false;
                         }
-                        // test if anything important is in the event
-                        var skip = true;
-                        $(value.list).each(function(index,value) {
-                            if (value == null || (value.code != 401 && value.code != 101)) {
-                                return true;
-                            }else{
-                                skip = false;
-                            }
-                        });
-                        if(skip){
-                            return true;
-                        }
-                        //write to event table
-                        $('#event_table').append(
-                            $('<tr>').attr('data-id',id).attr('data-page',index).append(
-                                $('<td>').html(id)
-                            ).append(
-                                $('<td>').html(name)
-                            ).append(
-                                $('<td>').html(index+1)
-                            )
-                        );
                     });
+                    if(skip){
+                        return true;
+                    }
+                    //write to event table
+                    $('#event_table').append(
+                        $('<tr>').attr('data-id',id).attr('data-page',index).append(
+                            $('<td>').html(id)
+                        ).append(
+                            $('<td>').html(name)
+                        ).append(
+                            $('<td>').html(index+1)
+                        )
+                    );
                 });
-            }
+            });
+            // is the all except system
+        }else if($.isArray(json)){
+            $.each(org_data, function(index, value){
+                if(value == null) {
+                    return true;
+                }
+                if(typeof value.message3 != 'undefined' || typeof value.nickname != 'undefined'){
+
+                }else if(typeof value.description != 'undefined' || typeof value.name != 'undefined' || (typeof value.message1 != 'undefined' && typeof value.message2 != 'undefined')) {
+                    $('#items_table').append(
+                        $('<tr>',{
+                            'data-id': value.id
+                        }).append(
+                            $('<td>').html(value.name)
+                        ).append(
+                            $('<td>').html(value.description || '')
+                        ).append(
+                            $('<td>').html(value.message1 || '')
+                        ).append(
+                            $('<td>').html(value.message2 || '')
+                        ).append(
+                            $('<td>').append(itemEditEl(new_data[index].name, 'name'))
+                        ).append(
+                            $('<td>').append(itemEditEl(new_data[index].description,'description'))
+                        ).append(
+                            $('<td>').append(itemEditEl(new_data[index].message1, 'message1'))
+                        ).append(
+                            $('<td>').append(itemEditEl(new_data[index].message2, 'message2'))
+                        )
+                    );
+                    $('#items').removeClass('hidden');
+                }
+            })
         }
+        console.log(json);
+    }
+
+    function itemEditEl(value, field){
+        if(typeof value == 'undefined')
+            return $();
+        return $('<input>',{
+            'type': 'text',
+            'class': 'form-control',
+            'data-field': field,
+            'value': value
+        })
     }
 
     function loadText(){
@@ -104,9 +143,6 @@
         var list = org_data.events[id].pages[page].list;
         var list_new =new_data.events[id].pages[page].list;
         $(list).each(function(index,value){
-            if(debug){
-                $('#debug_data').html(btoa(JSON.stringify(list)));
-            }
             if(value == null || (value.code != 401 && value.code != 101 && value.code != 102)){
                 return true;
             }
@@ -201,10 +237,21 @@
         par.removeClass('info').addClass('success');
     }
 
+    function saveItem(){
+        var el=$(this);
+        var par=el.parents('tr');
+        par.removeClass('success').addClass('info');
+        var id = par.data('id');
+        var field = el.data('field');
+        new_data[id][field] = el.val();
+        par.removeClass('info').addClass('success');
+    }
+
     function downloadJSON(){
         if(file_name == ''){
             return false;
         }
+        $('#debug_data').html(btoa(JSON.stringify(new_data)));
         var blob = new Blob([JSON.stringify(new_data)], {type: "text/json;charset=utf-8"});
         saveAs(blob, file_name);
     }
@@ -212,5 +259,8 @@
     function clearAll(){
         $('#event_table').empty();
         $('#text_table').empty();
+        $('#items_table').empty();
+        $('#items').addClass('hidden');
+        $('#maps').addClass('hidden');
     }
 })(jQuery);
