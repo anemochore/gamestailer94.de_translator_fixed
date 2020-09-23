@@ -251,7 +251,7 @@
         if(file_name == ''){
             return false;
         }
-        $('#debug_data').html(btoa(JSON.stringify(new_data)));
+        //$('#debug_data').html(btoa(JSON.stringify(new_data)));
         var blob = new Blob([JSON.stringify(new_data)], {type: "text/json;charset=utf-8"});
         saveAs(blob, file_name);
     }
